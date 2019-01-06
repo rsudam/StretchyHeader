@@ -14,6 +14,7 @@ class StretchyHeaderController: UICollectionViewController, UICollectionViewDele
     fileprivate let cellId = "cellId"
     fileprivate let headerId = "headerId"
     fileprivate let padding:CGFloat = 16
+    var headerView:HeaderView?
     
     
     override func viewDidLoad() {
@@ -30,8 +31,8 @@ class StretchyHeaderController: UICollectionViewController, UICollectionViewDele
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-        return header
+        headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as? HeaderView
+        return headerView!
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -50,6 +51,18 @@ class StretchyHeaderController: UICollectionViewController, UICollectionViewDele
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+    
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffsetY = scrollView.contentOffset.y
+        
+        if contentOffsetY > 0 {
+            headerView?.animator.fractionComplete = 0
+            return
+        }
+        
+        headerView?.animator.fractionComplete = abs(contentOffsetY) / 100
     }
     
     
